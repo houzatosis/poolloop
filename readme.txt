@@ -8,6 +8,10 @@ These assets are responsible for the visual aspects of the 3 different kinds of 
 
 Currently all these balls point to a prototype mesh in an FBX file. Feel free to add new FBX files and redirect these prefabs to point to your new mesh.
 
+To make a pool table in your own scene and have the balls show up:
+
+All you need to do to get the balls to show up is to create 2 empty objects, one to spawn the cue ball, and one to spawn the group of object balls. Attach the script "CueBallSpawner.cs" to spawn the cue ball, attach the script "ObjectBallGroupSpawner.cs" to spawn the triangle layout of object balls (striped and solid balls). Check out prototype.unity for an example of this. (Don't modify prototype.unity though please).
+
 Gameplay assets:
 
 Assets/Resources/Spawned/CueBall.prefab
