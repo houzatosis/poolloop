@@ -7,7 +7,8 @@ public class CueBallSpawner : MonoBehaviour {
 	void Start ()
     {
         GameObject cueBallPrefab = (GameObject)Resources.Load("Spawned/CueBall");
-        GameObject.Instantiate(cueBallPrefab);        
+        GameObject clone = GameObject.Instantiate(cueBallPrefab);
+        clone.transform.position = gameObject.transform.position;
 	}
 	
 	// Update is called once per frame
