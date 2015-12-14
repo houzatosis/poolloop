@@ -1,46 +1,36 @@
 fileFormatVersion: 2
-guid: 5afec7ba5ec706246993698d9d464c70
-timeCreated: 1449983726
+guid: 833d97d2a3c8eef419e5a39e22743051
+timeCreated: 1450062471
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: poolTable_geo
-    100004: poolTable_geo.001
-    100006: poolTable_geo.002
-    100008: bumperCollider_geo
-    100010: Camera
-    100012: playAreaCollider_geo
-    100014: poolTable_geo.000
-    400000: //RootNode
-    400002: poolTable_geo
-    400004: poolTable_geo.001
-    400006: poolTable_geo.002
-    400008: bumperCollider_geo
-    400010: Camera
-    400012: playAreaCollider_geo
-    400014: poolTable_geo.000
-    2300000: //RootNode
-    2300002: poolTable_geo
-    2300004: poolTable_geo.001
-    2300006: poolTable_geo.002
-    2300008: bumperCollider_geo
-    2300010: playAreaCollider_geo
-    2300012: poolTable_geo.000
-    3300000: //RootNode
-    3300002: poolTable_geo
-    3300004: poolTable_geo.001
-    3300006: poolTable_geo.002
-    3300008: bumperCollider_geo
-    3300010: playAreaCollider_geo
-    3300012: poolTable_geo.000
-    4300000: poolTable_geo
-    4300002: poolTable_geo.002
-    4300004: poolTable_geo.001
-    4300006: bumperCollider_geo
-    4300008: playAreaCollider_geo
-    4300010: poolTable_geo.000
+    100000: bumperCollider_geo
+    100002: Camera
+    100004: playAreaCollider_geo
+    100006: poolTable_geo
+    100008: //RootNode
+    100010: TestTable_geo
+    400000: bumperCollider_geo
+    400002: Camera
+    400004: playAreaCollider_geo
+    400006: poolTable_geo
+    400008: //RootNode
+    400010: TestTable_geo
+    2300000: bumperCollider_geo
+    2300002: playAreaCollider_geo
+    2300004: poolTable_geo
+    2300006: TestTable_geo
+    2300008: //RootNode
+    3300000: bumperCollider_geo
+    3300002: playAreaCollider_geo
+    3300004: poolTable_geo
+    3300006: TestTable_geo
+    3300008: //RootNode
+    4300000: TestTable_geo
+    4300002: bumperCollider_geo
+    4300004: playAreaCollider_geo
+    4300006: poolTable_geo
   materials:
     importMaterials: 1
     materialName: 0
