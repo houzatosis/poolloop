@@ -51,8 +51,8 @@ public class PoolLoopGame : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             Ray testRay = shotCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit = new RaycastHit();
-            if (Physics.Raycast(testRay, out hit))
+            RaycastHit2D hit = Physics2D.GetRayIntersection(testRay);
+            if (hit)
             {
                 PoolLoopBall ball = hit.collider.gameObject.GetComponent<PoolLoopBall>();
                 if (ball != null)
@@ -82,10 +82,10 @@ public class PoolLoopGame : MonoBehaviour
         {
             // update shotAngle and shotDistance
             shotAngle = Mathf.Atan2(mouseToCueball.y, mouseToCueball.x);
-            RaycastHit hit = new RaycastHit();
-            if (Physics.Raycast(shotCamera.ScreenPointToRay(Input.mousePosition), out hit))
+            RaycastHit2D hit = Physics2D.GetRayIntersection(shotCamera.ScreenPointToRay(Input.mousePosition));
+            if (hit)
             {
-                shotDistance = (cueBall.transform.position - hit.point).magnitude;
+                shotDistance = (cueBall.transform.position - new Vector3(hit.point.x, hit.point.y, cueBall.transform.position.z)).magnitude;
                 if (shotDistance < cueBall.transform.localScale.x)
                     shotDistance = cueBall.transform.localScale.x + 0.01f;
             }            
@@ -106,19 +106,20 @@ public class PoolLoopGame : MonoBehaviour
         float offsetDistance = stickLength * 0.5f + shotDistance;
 
         float xOffset = offsetDistance * Mathf.Cos(shotAngle);
-        float zOffset = offsetDistance * Mathf.Sin(shotAngle);
+        float yOffset = offsetDistance * Mathf.Sin(shotAngle);
 
-        poolStick.transform.position = cueBall.transform.position + new Vector3(xOffset, 0, zOffset);
-        poolStick.transform.rotation = Quaternion.Euler(0, Mathf.Rad2Deg*(Mathf.PI - shotAngle), 90);
+        poolStick.transform.position = cueBall.transform.position + new Vector3(xOffset, yOffset, 0);
+        poolStick.transform.rotation = Quaternion.Euler(0, 0, 90 - Mathf.Rad2Deg * (Mathf.PI - shotAngle));
     }
 
     void EnterBallsActiveState()
     {
-        Rigidbody body = cueBall.GetComponent<Rigidbody>();
-        Vector3 forceDirection = new Vector3(-Mathf.Cos(shotAngle), 0, -Mathf.Sin(shotAngle));
+        Rigidbody2D body = cueBall.GetComponent<Rigidbody2D>();
+        Vector2 forceDirection = new Vector3(-Mathf.Cos(shotAngle), -Mathf.Sin(shotAngle), 0);
 
-        Vector3 forcePosition = cueBall.transform.position - forceDirection * cueBall.transform.localScale.x;
+        Vector2 cueBallPos2d = new Vector2(cueBall.transform.position.x, cueBall.transform.position.y);
+        Vector2 forcePosition = cueBallPos2d - forceDirection * cueBall.transform.localScale.x;
 
-        body.AddForceAtPosition(forceDirection*Mathf.Pow(10, 1 + shotDistance), forcePosition);
+        body.AddForceAtPosition(forceDirection*Mathf.Pow(15, 1 + shotDistance), forcePosition);
     }
 }

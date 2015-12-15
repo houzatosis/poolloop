@@ -26,10 +26,12 @@ public class PoolLoopBall : MonoBehaviour
             Debug.LogError("Couldn't load resource " + ballName);
         }
 
-        Rigidbody body = GetComponent<Rigidbody>();
-        body.angularDrag = 0.008f;
+        Rigidbody2D body = GetComponent<Rigidbody2D>();
         body.mass = 0.17f;
-	}
+        body.drag = 0.1f;
+
+        body.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
 	
 	// Update is called once per frame
 	void Update ()
