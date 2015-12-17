@@ -33,7 +33,9 @@ public class PoolLoopGame : MonoBehaviour
     GameObject poolStick;
     Text debugText;
 
+    float clockStart; // the last time the clock started (new value for each shot)
     float clockTime;
+    float rewindStartTime; // wait for Time.time to be > than this to start rewinding, then start rewinding the clockTime down to 0
 
     ArrayList balls;
 
@@ -67,6 +69,9 @@ public class PoolLoopGame : MonoBehaviour
                 break;
             case State.BALLS_ACTIVE:
                 BallsActiveUpdate();
+                break;
+            case State.BALLS_REWINDING:
+                BallsRewindingUpdate();
                 break;
         }
 
@@ -154,7 +159,15 @@ public class PoolLoopGame : MonoBehaviour
         Vector2 cueBallPos2d = new Vector2(cueBall.transform.position.x, cueBall.transform.position.y);
         Vector2 forcePosition = cueBallPos2d - forceDirection * cueBall.transform.localScale.x;
 
-        body.AddForceAtPosition(forceDirection*Mathf.Pow(25, 1 + shotDistance), forcePosition);
+        body.AddForceAtPosition(forceDirection * Mathf.Pow(25, 1 + shotDistance), forcePosition);
+
+        clockStart = Time.fixedTime;
+
+        for (int i = 0; i < balls.Count; ++i)
+        {
+            PoolLoopBall ball = (PoolLoopBall)balls[i];
+            ball.EnterActiveState();
+        }
     }
 
     void BallsActiveUpdate()
@@ -175,7 +188,39 @@ public class PoolLoopGame : MonoBehaviour
 
         if (allSleeping)
         {
-            state = State.BEFORE_PREPARING_SHOT;
+            state = State.BALLS_REWINDING;
+            rewindStartTime = Time.time + 1.5f;
+            for (int i = 0; i < balls.Count; ++i)
+            {
+                PoolLoopBall ball = (PoolLoopBall)balls[i];
+                ball.EnterScrubbingState();
+            }                
+        }
+    }
+
+    void BallsRewindingUpdate()
+    {
+        if (Time.time > rewindStartTime)
+        {
+            clockTime -= Time.deltaTime;
+            if (clockTime < 0)
+                clockTime = 0;
+
+            for (int i = 0; i < balls.Count; ++i)
+            {
+                PoolLoopBall ball = (PoolLoopBall)balls[i];
+                ball.UpdateScrubTime(clockTime);
+            }
+
+            if (clockTime == 0)
+            {
+                state = State.BEFORE_PREPARING_SHOT;
+                for (int i = 0; i < balls.Count; ++i)
+                {
+                    PoolLoopBall ball = (PoolLoopBall)balls[i];
+                    ball.EnterActiveState();
+                }
+            }
         }
     }
 
@@ -188,4 +233,9 @@ public class PoolLoopGame : MonoBehaviour
     {
         balls.Add(ball);
     }    
+
+    public float GetLastClockStartTime()
+    {
+        return clockStart;
+    }
 }
