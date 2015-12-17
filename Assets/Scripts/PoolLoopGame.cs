@@ -1,13 +1,21 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PoolLoopGame : MonoBehaviour
 {
+    // Recorded Shot
+    class Shot
+    {
+
+    }
+
     enum State
     {
         BEFORE_PREPARING_SHOT,
         PREPARING_SHOT,
-        BALLS_ACTIVE
+        BALLS_ACTIVE,
+        BALLS_REWINDING
     }
 
     State state;
@@ -23,6 +31,16 @@ public class PoolLoopGame : MonoBehaviour
 
     Camera shotCamera;
     GameObject poolStick;
+    Text debugText;
+
+    float clockTime;
+
+    ArrayList balls;
+
+    void Awake()
+    {
+        balls = new ArrayList();
+    }
 
 	void Start ()
     {
@@ -31,20 +49,29 @@ public class PoolLoopGame : MonoBehaviour
 
         shotCamera = GameObject.Find("ShotCamera").GetComponent<Camera>();
         poolStick = GameObject.Find("PoolStick");
+
+        clockTime = 0.0f;
+
+        debugText = gameObject.GetComponentInChildren<Text>();
     }
-	
-	void Update ()
+
+    void Update()
     {
         switch (state)
         {
-        case State.BEFORE_PREPARING_SHOT:
-            BeforePreparingShotUpdate();
-            break;
-        case State.PREPARING_SHOT:
-            PreparingShotUpdate();
-            break;
+            case State.BEFORE_PREPARING_SHOT:
+                BeforePreparingShotUpdate();
+                break;
+            case State.PREPARING_SHOT:
+                PreparingShotUpdate();
+                break;
+            case State.BALLS_ACTIVE:
+                BallsActiveUpdate();
+                break;
         }
-	}
+
+        RefreshDebugText();
+    }
 
     void BeforePreparingShotUpdate()
     {
@@ -68,6 +95,9 @@ public class PoolLoopGame : MonoBehaviour
     {
         cueBall = cueBallToHit;
         state = State.PREPARING_SHOT;
+
+        MeshRenderer poolStickRenderer = poolStick.GetComponent<MeshRenderer>();
+        poolStickRenderer.enabled = true;
 
         cueBallScreenPosition = shotCamera.WorldToScreenPoint(cueBall.transform.position);
 
@@ -114,12 +144,48 @@ public class PoolLoopGame : MonoBehaviour
 
     void EnterBallsActiveState()
     {
+        state = State.BALLS_ACTIVE;
+        MeshRenderer poolStickRenderer = poolStick.GetComponent<MeshRenderer>();
+        poolStickRenderer.enabled = false;
+
         Rigidbody2D body = cueBall.GetComponent<Rigidbody2D>();
         Vector2 forceDirection = new Vector3(-Mathf.Cos(shotAngle), -Mathf.Sin(shotAngle), 0);
 
         Vector2 cueBallPos2d = new Vector2(cueBall.transform.position.x, cueBall.transform.position.y);
         Vector2 forcePosition = cueBallPos2d - forceDirection * cueBall.transform.localScale.x;
 
-        body.AddForceAtPosition(forceDirection*Mathf.Pow(15, 1 + shotDistance), forcePosition);
+        body.AddForceAtPosition(forceDirection*Mathf.Pow(25, 1 + shotDistance), forcePosition);
     }
+
+    void BallsActiveUpdate()
+    {
+        clockTime += Time.deltaTime;
+
+        bool allSleeping = true;
+        for (int i = 0; i < balls.Count; ++i)
+        {
+            PoolLoopBall ball = (PoolLoopBall)balls[i];
+            Rigidbody2D ballBody = ball.gameObject.GetComponent<Rigidbody2D>();
+            if (!ballBody.IsSleeping())
+            {
+                allSleeping = false;
+                break;
+            }
+        }
+
+        if (allSleeping)
+        {
+            state = State.BEFORE_PREPARING_SHOT;
+        }
+    }
+
+    void RefreshDebugText()
+    {
+        debugText.text = "State = " + state.ToString() + " Shot Clock = " + clockTime;
+    }
+
+    public void OnPoolLoopBallStart(PoolLoopBall ball)
+    {
+        balls.Add(ball);
+    }    
 }

@@ -28,9 +28,13 @@ public class PoolLoopBall : MonoBehaviour
 
         Rigidbody2D body = GetComponent<Rigidbody2D>();
         body.mass = 0.17f;
-        body.drag = 0.1f;
+        body.drag = 0.5f;
 
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
+        body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+        PoolLoopGame game = GameObject.Find("PoolLoopGame").GetComponent<PoolLoopGame>();
+        game.OnPoolLoopBallStart(this);
     }
 	
 	// Update is called once per frame
